@@ -177,6 +177,7 @@
         <div class="card">
             <div class="card-header"><i class="fas fa-tags me-2"></i>Daftar Produk (Klik untuk tambah ke keranjang)</div>
             <div class="card-body">
+                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Cari produk...">
                 <div class="category-filter mb-3" id="categoryFilter"></div>
                 <div class="row" id="productList"></div>
             </div>
@@ -245,7 +246,7 @@
         <div class="watermark" style="position:absolute; opacity:0.1; font-size:60px; transform:rotate(-45deg); top:40%; left:20%;">Berkah comp and copy center</div>
         <div class="invoice-header">
             <div class="row">
-                <div class="col-7"><div class="company-details"><h4>Berkah comp and copy center</h4><p>Jl. Digital No. 88, Indonesia</p><p>Telp/WA : 08123456789</p><p>Email : toko@online.com</p></div></div>
+                <div class="col-7"><div class="company-details"><h4>Berkah comp and copy center</h4><p>Jl. Krajan lor, Desa Wonojoyo, Kec. Gurah, Kediri</p><p>Telp/WA : 085143884484</p><p>Email : berkahcomp.copycenter.com</p></div></div>
                 <div class="col-5 text-end"><div class="document-type-badge">NOTA PENJUALAN</div><h3 style="font-size:1.2rem;">NOTA</h3><p><strong>No:</strong> <span id="docNumber">-</span><br><strong>Tgl:</strong> <span id="docDate">-</span></p></div>
             </div>
         </div>
@@ -494,6 +495,7 @@
         
         let cart = [];
         let currentCategory = "Semua";
+        let searchTerm = "";
         
         function formatRupiah(angka) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
@@ -520,8 +522,12 @@
         function renderProducts() {
             const container = document.getElementById('productList');
             container.innerHTML = '';
-            const filtered = currentCategory === "Semua" ? productsData : productsData.filter(p => p.category === currentCategory);
+            let filtered = currentCategory === "Semua" ? productsData : productsData.filter(p => p.category === currentCategory);
+            if (searchTerm) {
+                filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            }
             filtered.forEach(p => {
+                p.image = `produk${p.id}.jpg`;
                 const col = document.createElement('div');
                 col.className = 'col-md-3 col-sm-4 col-6 mb-3';
                 col.innerHTML = `
@@ -724,6 +730,11 @@
             const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message + " (Nota terlampir, silakan unduh gambar)")}`;
             window.open(waUrl, '_blank');
             bootstrap.Modal.getInstance(document.getElementById('whatsappModal')).hide();
+        });
+        
+        document.getElementById('searchInput').addEventListener('input', function() {
+            searchTerm = this.value;
+            renderProducts();
         });
         
         renderCategoryFilter();

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berkah comp and copy center - Nota A5 (Lengkap)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="img/logo_toko.png" type="image/png">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #e67e22;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --whatsapp-color: #25D366;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .navbar { background-color: var(--primary-color); }
+        .navbar-brand { font-weight: bold; color: white !important; }
+        .hero-section {
+            background: linear-gradient(rgba(44,62,80,0.8), rgba(44,62,80,0.8)), url('https://images.unsplash.com/photo-1472851294608-062f824d29cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: none;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+        .btn-primary { background-color: var(--secondary-color); border: none; }
+        .btn-primary:hover { background-color: #d35400; }
+        .btn-danger { background-color: var(--accent-color); }
+        .btn-success { background-color: #27ae60; }
+        .btn-whatsapp { background-color: var(--whatsapp-color); color: white; }
+        .btn-whatsapp:hover { background-color: #128C7E; color: white; }
+        .btn-pdf { background-color: #e74c3c; color: white; }
+        .btn-pdf:hover { background-color: #c0392b; color: white; }
+        .table th { background-color: var(--light-color); }
+        .total-section {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        /* Nota A5 */
+        .invoice-section {
+            display: none;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            width: 560px;
+            min-height: 794px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            font-size: 0.8rem;
+        }
+        .invoice-header {
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+        .company-details h4 { font-size: 1.1rem; font-weight: bold; margin-bottom: 2px; }
+        .company-details p { margin-bottom: 0; font-size: 0.7rem; line-height: 1.1; }
+        .document-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            background-color: #e67e22;
+            color: white;
+        }
+        .signature-area {
+            margin-top: 15px;
+            padding-top: 8px;
+            border-top: 1px dashed #ccc;
+        }
+        .signature-container { display: flex; justify-content: flex-end; }
+        .shop-signature { width: 45%; text-align: center; }
+        .signature-line { width: 100%; height: 1px; background-color: #000; margin: 30px 0 5px 0; }
+        @media print {
+            body * { visibility: hidden; }
+            .invoice-section, .invoice-section * { visibility: visible; }
+            .invoice-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 5mm;
+                box-shadow: none;
+                page-break-after: always;
+            }
+            .no-print { display: none !important; }
+            @page { size: A5 portrait; margin: 5mm; }
+        }
+        .product-card {
+            cursor: pointer;
+            transition: all 0.2s;
+            height: 100%;
+        }
+        .product-card:hover { transform: scale(1.02); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .product-img {
+            width: 100%;
+            height: 140px;
+            object-fit: contain;
+            background: #f5f5f5;
+            padding: 5px;
+            border-radius: 8px;
+        }
+        .cart-item-img { width: 40px; height: 40px; object-fit: cover; border-radius: 5px; }
+        .qty-input { width: 70px; text-align: center; }
+        .preview-image { max-width: 100%; border: 1px solid #ddd; border-radius: 5px; }
+        .category-filter { margin-bottom: 15px; }
+        .category-badge {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 0 5px 5px 0;
+            display: inline-block;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .category-badge.active {
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><img src="img/logo_toko.png" alt="Logo" style="height: 40px; margin-right: 10px;">Berkah comp and copy center</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#home">Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#products">Produk</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="badge bg-danger ms-1" id="cartBadge" style="display: none;">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-section" id="home">
+        <div class="container">
+            <h1 class="display-4">Berkah comp and copy center</h1>
+            <p class="lead">Ratusan produk alat tulis, amplop, kertas, dan perlengkapan kantor</p>
+        </div>
+    </div>
+
+    <div class="container my-4" id="products">
+        <div class="card">
+            <div class="card-header"><i class="fas fa-tags me-2"></i>Daftar Produk (Klik untuk tambah ke keranjang)</div>
+            <div class="card-body">
+                <div class="category-filter mb-3" id="categoryFilter"></div>
+                <div class="row" id="productList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-4" id="cart">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-shopping-cart me-2"></i>Keranjang Belanja</span>
+                <button id="clearCartBtn" class="btn btn-sm btn-danger">Kosongkan</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="cartTable">
+                        <thead><tr><th>Produk</th><th>Harga</th><th>Jumlah</th><th>Subtotal</th><th>Aksi</th></tr></thead>
+                        <tbody id="cartItems"></tbody>
+                    </table>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="border p-3 rounded">
+                            <h6>Data Pelanggan</h6>
+                            <input type="text" id="customerName" class="form-control mb-2" placeholder="Nama Pelanggan">
+                            <input type="text" id="customerPhone" class="form-control mb-2" placeholder="No. WA (opsional)">
+                            <textarea id="customerAddress" class="form-control mb-2" rows="2" placeholder="Alamat"></textarea>
+                            <select id="paymentMethod" class="form-select mb-2">
+                                <option>Transfer Bank</option><option>Tunai</option><option>QRIS</option>
+                            </select>
+                            <select id="paymentStatus" class="form-select mb-2">
+                                <option>Lunas</option><option>DP</option><option>Belum Dibayar</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="total-section">
+                            <div class="d-flex justify-content-between"><span>Subtotal:</span><span id="subtotal">Rp 0</span></div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <span>PPN (%)</span>
+                                <input type="number" id="taxPercent" value="0" min="0" step="0.1" style="width:80px" class="form-control form-control-sm">
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <span>Diskon (Rp)</span>
+                                <input type="number" id="discountAmount" value="0" min="0" class="form-control form-control-sm" style="width:100px">
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <span>Uang Muka (Rp)</span>
+                                <input type="number" id="dpAmount" value="0" min="0" class="form-control form-control-sm" style="width:100px">
+                            </div>
+                            <button id="updateTotalsBtn" class="btn btn-outline-primary btn-sm mt-2">Update</button>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold"><span>Total:</span><span id="totalFinal">Rp 0</span></div>
+                            <div class="d-flex justify-content-between fw-bold text-danger"><span>Sisa Tagihan:</span><span id="remaining">Rp 0</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button id="generateNotaBtn" class="btn btn-success me-2"><i class="fas fa-receipt"></i> Buat Nota A5</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nota A5 -->
+    <div class="invoice-section" id="notaSection">
+        <div class="watermark" style="position:absolute; opacity:0.1; font-size:60px; transform:rotate(-45deg); top:40%; left:20%;">Berkah comp and copy center</div>
+        <div class="invoice-header">
+            <div class="row">
+                <div class="col-7"><div class="company-details"><h4>Berkah comp and copy center</h4><p>Jl. Digital No. 88, Indonesia</p><p>Telp/WA : 08123456789</p><p>Email : toko@online.com</p></div></div>
+                <div class="col-5 text-end"><div class="document-type-badge">NOTA PENJUALAN</div><h3 style="font-size:1.2rem;">NOTA</h3><p><strong>No:</strong> <span id="docNumber">-</span><br><strong>Tgl:</strong> <span id="docDate">-</span></p></div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-7"><p><strong>Kepada:</strong> <span id="docCustomerName"></span><br><span id="docCustomerAddress"></span><br><span id="docCustomerPhone"></span></p></div>
+            <div class="col-5 text-end"><p><strong>Pembayaran:</strong> <span id="docPaymentMethod"></span><br><strong>Status:</strong> <span id="docPaymentStatus"></span></p></div>
+        </div>
+        <table class="table table-bordered" style="font-size:0.7rem;">
+            <thead><tr><th>#</th><th>Produk</th><th>Harga</th><th>Jml</th><th>Subtotal</th></tr></thead>
+            <tbody id="docCartItems"></tbody>
+        </table>
+        <div class="row">
+            <div class="col-6"><p class="small"><strong>Catatan:</strong> <span id="docNotes">Barang yang sudah dibeli tidak dapat dikembalikan.</span></p></div>
+            <div class="col-6">
+                <div class="total-section p-2">
+                    <div class="d-flex justify-content-between"><span>Subtotal:</span><span id="docSubtotal">Rp 0</span></div>
+                    <div class="d-flex justify-content-between"><span>PPN (<span id="docTaxPercent">0</span>%):</span><span id="docTax">Rp 0</span></div>
+                    <div class="d-flex justify-content-between"><span>Diskon:</span><span id="docDiscount">Rp 0</span></div>
+                    <div class="d-flex justify-content-between"><span>Uang Muka:</span><span id="docDP">Rp 0</span></div>
+                    <hr><div class="d-flex justify-content-between fw-bold"><span>TOTAL:</span><span id="docTotal">Rp 0</span></div>
+                    <div class="d-flex justify-content-between text-danger"><span>Sisa:</span><span id="docRemaining">Rp 0</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="signature-area">
+            <div class="signature-container"><div class="shop-signature"><p>Hormat kami,</p><div class="signature-line"></div><p class="fw-bold">Berkah comp and copy center</p><p>Kasir</p></div></div>
+            <div class="text-center mt-2"><small>Terima kasih telah berbelanja</small></div>
+        </div>
+        <div class="text-center mt-2 no-print">
+            <button id="closeNotaBtn" class="btn btn-secondary btn-sm">Tutup</button>
+            <button id="printNotaBtn" class="btn btn-primary btn-sm">Cetak A5</button>
+            <button id="downloadPdfBtn" class="btn btn-pdf btn-sm">PDF</button>
+            <button id="sendWABtn" class="btn btn-whatsapp btn-sm">WhatsApp</button>
+        </div>
+    </div>
+
+    <!-- Modal WhatsApp -->
+    <div class="modal fade" id="whatsappModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title"><i class="fab fa-whatsapp"></i> Kirim Nota</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body"><div id="waLoading" class="text-center"><div class="spinner-border"></div><p>Menyiapkan...</p></div>
+        <div id="waContent" style="display:none;"><div class="row"><div class="col-md-6"><div id="imagePreview"></div></div><div class="col-md-6"><input type="text" id="waNumber" class="form-control mb-2" placeholder="628123456789"><textarea id="waMessage" class="form-control mb-2" rows="4">Halo, berikut nota belanja Anda. Terima kasih.</textarea><div class="alert alert-info">Nota akan dikirim sebagai gambar JPG</div></div></div></div></div>
+        <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button id="confirmWaBtn" class="btn btn-whatsapp" style="display:none;">Kirim</button><a href="#" id="downloadImageBtn" class="btn btn-success" style="display:none;">Download Gambar</a></div>
+    </div></div></div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5"><div class="container">&copy; 2025 Berkah comp and copy center - Sistem Nota A5</div></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ==================== DATA PRODUK (Dari file Excel) ====================
+        // Karena data sangat banyak, kita buat array produk dengan format: { id, name, category, price, image }
+        // Harga diambil dari kolom "Estimasi Harga (Rp)" dan dirata-rata jika range.
+        // Gambar menggunakan template produk1.jpg, produk2.jpg, dst berdasarkan id.
+        
+        const productsData = [
+            // Amplop
+            { id:1, name:"Amplop Putih No.90 Paperline (100 lbr)", category:"Amplop", price:32000 },
+            { id:2, name:"Amplop Putih No.90 A Basics (10 lbr)", category:"Amplop", price:7000 },
+            { id:3, name:"Amplop Putih No.90 Merpati (100 lbr)", category:"Amplop", price:47500 },
+            { id:4, name:"Amplop Putih No.90 Garda (100 lbr)", category:"Amplop", price:14300 },
+            { id:5, name:"Amplop Putih No.90 Umum (100 lbr)", category:"Amplop", price:30000 },
+            { id:6, name:"Amplop Putih No.104 Paperline (100 lbr)", category:"Amplop", price:21000 },
+            { id:7, name:"Amplop Putih No.104 Grandia (100 lbr)", category:"Amplop", price:11900 },
+            { id:8, name:"Amplop Putih No.104 Kiky/Merpati (100 lbr)", category:"Amplop", price:11500 },
+            { id:9, name:"Amplop Putih No.110 Paperline (100 lbr)", category:"Amplop", price:20500 },
+            { id:10, name:"Amplop Coklat Folio Brio (100 lbr)", category:"Amplop", price:68000 },
+            { id:11, name:"Amplop Coklat Folio GAND (100 lbr)", category:"Amplop", price:60000 },
+            { id:12, name:"Amplop Coklat Folio A Basics (10 lbr)", category:"Amplop", price:16300 },
+            { id:13, name:"Amplop Coklat Folio Umum (100 lbr)", category:"Amplop", price:100000 },
+            { id:14, name:"Amplop Coklat A3 (per pack)", category:"Amplop", price:85000 },
+            { id:15, name:"Amplop Coklat A4 Garan (100 lbr)", category:"Amplop", price:58000 },
+            { id:16, name:"Amplop Coklat 303 Kiky (10 lbr)", category:"Amplop", price:68000 },
+            { id:17, name:"Amplop Coklat B (120x280)", category:"Amplop", price:7500 },
+            { id:18, name:"Amplop Coklat C (180x280)", category:"Amplop", price:7500 },
+            { id:19, name:"Amplop Coklat E (280x400)", category:"Amplop", price:7500 },
+            { id:20, name:"Amplop C4 (229x324)", category:"Amplop", price:12500 },
+            { id:21, name:"Amplop C5 (162x229)", category:"Amplop", price:7500 },
+            { id:22, name:"Amplop C6 (114x162)", category:"Amplop", price:5000 },
+            { id:23, name:"Amplop Kecil Merpati (110x70)", category:"Amplop", price:21000 },
+            { id:24, name:"Amplop Kabinet (108x241)", category:"Amplop", price:7500 },
+            { id:25, name:"Amplop Super Kabinet (140x260)", category:"Amplop", price:7500 },
+            { id:26, name:"Amplop 1/2 Folio (190x250)", category:"Amplop", price:7500 },
+            { id:27, name:"Amplop Kwarto (210x270)", category:"Amplop", price:7500 },
+            { id:28, name:"Amplop Folio (250x340)", category:"Amplop", price:7500 },
+            { id:29, name:"Amplop Tali Map (290x400)", category:"Amplop", price:7500 },
+            { id:30, name:"Amplop Tali Map Super (290x395)", category:"Amplop", price:7500 },
+            
+            // Kertas
+            { id:31, name:"HVS PaperOne A4 75gsm (rim)", category:"Kertas", price:45000 },
+            { id:32, name:"HVS Bola Dunia A4 80gsm (rim)", category:"Kertas", price:63000 },
+            { id:33, name:"HVS Sidu A4 70gsm (rim)", category:"Kertas", price:55000 },
+            { id:34, name:"HVS Natural A4 75gsm (rim)", category:"Kertas", price:85000 },
+            { id:35, name:"HVS Bola Dunia F4 80gsm (rim)", category:"Kertas", price:72500 },
+            { id:36, name:"HVS Umum F4 75gsm (rim)", category:"Kertas", price:57000 },
+            { id:37, name:"HVS PaperOne A3 100gsm (rim)", category:"Kertas", price:142500 },
+            { id:38, name:"HVS Sinar Dunia Kuarto 70gsm (5 rim)", category:"Kertas", price:205000 },
+            { id:39, name:"Art Paper Eprint A4 150gsm (50 lbr)", category:"Kertas", price:100000 },
+            { id:40, name:"Art Paper APP A4 120gsm (100 lbr)", category:"Kertas", price:85500 },
+            { id:41, name:"Art Paper Canson A4 110gsm (5 lbr)", category:"Kertas", price:35000 },
+            { id:42, name:"Karton Buffalo Guppy F4 (10 lbr)", category:"Kertas", price:4500 },
+            { id:43, name:"Karton Buffalo Sinar Dunia F4 (100 lbr)", category:"Kertas", price:25200 },
+            { id:44, name:"Karton Buffalo Umum F4 (100 lbr)", category:"Kertas", price:59000 },
+            { id:45, name:"Karton Buffalo Umum A4 (30 lbr)", category:"Kertas", price:29600 },
+            { id:46, name:"Foto Glossy Joyko A4 (10 set)", category:"Kertas", price:188695 },
+            { id:47, name:"Foto Glossy e-print A4 (20 lbr)", category:"Kertas", price:10000 },
+            { id:48, name:"Foto Glossy Evercoss A4 (20 lbr)", category:"Kertas", price:22000 },
+            { id:49, name:"Foto Glossy Printech A4 (20 lbr)", category:"Kertas", price:30000 },
+            { id:50, name:"Manila Asturo (50 lbr)", category:"Kertas", price:2750 },
+            { id:51, name:"Manila Ukuran 86x61 cm (per lbr)", category:"Kertas", price:15000 },
+            { id:52, name:"Manila Super 85x60 cm (per lbr)", category:"Kertas", price:7500 },
+            { id:53, name:"BC Brief Card Rainbow F4 (100 lbr)", category:"Kertas", price:30000 },
+            { id:54, name:"BC Brief Card Umum A4 (50 lbr)", category:"Kertas", price:46000 },
+            { id:55, name:"BC Brief Card Umum A3 (50 lbr)", category:"Kertas", price:35000 },
+            { id:56, name:"Kalkir Aristonz A4 (50 lbr)", category:"Kertas", price:35000 },
+            { id:57, name:"Kalkir Umum F4 (rim)", category:"Kertas", price:75000 },
+            { id:58, name:"Linen Umum A4 (50 lbr)", category:"Kertas", price:3500 },
+            { id:59, name:"Linen Jepang A4 (50 lbr)", category:"Kertas", price:30000 },
+            { id:60, name:"Linen Jepang F4 (per lbr)", category:"Kertas", price:7500 },
+            { id:61, name:"Dupleks Plano 350gsm (per lbr)", category:"Kertas", price:15000 },
+            { id:62, name:"Kertas Kado Kiky (48x68)", category:"Kertas", price:2000 },
+            { id:63, name:"Kertas Kado Aesthetic (64x49)", category:"Kertas", price:1500 },
+            { id:64, name:"Kertas Kado Art Paper A3+", category:"Kertas", price:15000 },
+            { id:65, name:"Origami Asturo 16x16 (50 lbr)", category:"Kertas", price:14750 },
+            { id:66, name:"Origami Asturo 12x12 (50 lbr)", category:"Kertas", price:8900 },
+            { id:67, name:"Origami Umum 14x14 (100 lbr)", category:"Kertas", price:10000 },
+            { id:68, name:"Stiker Chromo Glossy A4 (50 lbr)", category:"Kertas", price:31000 },
+            { id:69, name:"Stiker Glossy Photo Paper A4", category:"Kertas", price:18785 },
+            { id:70, name:"Stiker Asturo 32x52 cm", category:"Kertas", price:14390 },
+            { id:71, name:"Karbon Daito Folio (100 lbr)", category:"Kertas", price:63064 },
+            { id:72, name:"Karbon Sailing Boat (100 lbr)", category:"Kertas", price:50000 },
+            { id:73, name:"Sampul Buku Plastik Kwarto", category:"Kertas", price:1500 },
+            { id:74, name:"Sampul Buku Samson Coklat A3 (100 lbr)", category:"Kertas", price:71500 },
+            
+            // Spidol
+            { id:75, name:"Spidol Whiteboard Snowman BG-12", category:"Spidol", price:8500 },
+            { id:76, name:"Spidol Whiteboard Snowman BG-12 (12 pcs)", category:"Spidol", price:119000 },
+            { id:77, name:"Spidol Whiteboard Snowman Jumbo ABG-850", category:"Spidol", price:18450 },
+            { id:78, name:"Spidol Whiteboard Snowman Kecil ABG-820", category:"Spidol", price:7900 },
+            { id:79, name:"Spidol Whiteboard Joyko WM-28", category:"Spidol", price:9400 },
+            { id:80, name:"Spidol Whiteboard Joyko WM-65 (12 pcs)", category:"Spidol", price:37500 },
+            { id:81, name:"Spidol Whiteboard Joyko WM-70", category:"Spidol", price:3350 },
+            { id:82, name:"Spidol Whiteboard Kenko WM-1", category:"Spidol", price:3600 },
+            { id:83, name:"Spidol Whiteboard Kenko WM-100 (12 pcs)", category:"Spidol", price:71500 },
+            { id:84, name:"Spidol Permanen Snowman Jumbo 500", category:"Spidol", price:18300 },
+            { id:85, name:"Spidol Permanen Joyko PTM-44 (12 pcs)", category:"Spidol", price:105400 },
+            { id:86, name:"Spidol Warna A Basics (12 warna)", category:"Spidol", price:15700 },
+            { id:87, name:"Spidol Kapur Cair Deli EU008 (12 pcs)", category:"Spidol", price:92400 },
+            { id:88, name:"Set Spidol Pastel Snowman PW-6A", category:"Spidol", price:8200 },
+            { id:89, name:"Set Spidol Pastel Snowman PW-24A", category:"Spidol", price:34980 },
+            { id:90, name:"Set Spidol Brush Pen Joyko CLP-06 (12 warna)", category:"Spidol", price:9900 },
+            
+            // Pulpen (contoh beberapa)
+            { id:91, name:"Pulpen AE7 Standar", category:"Pulpen", price:4000 },
+            { id:92, name:"Pulpen AE7 Dream Sunset", category:"Pulpen", price:5250 },
+            { id:93, name:"Pulpen AE7 Crystal Mix Color (12 pcs)", category:"Pulpen", price:30000 },
+            { id:94, name:"Pulpen Bantex Ballpoint", category:"Pulpen", price:7500 },
+            { id:95, name:"Pulpen Deli EQ3", category:"Pulpen", price:4500 },
+            { id:96, name:"Pulpen Joyko GP-265 Q Gel", category:"Pulpen", price:3000 },
+            { id:97, name:"Pulpen Joyko JK-100", category:"Pulpen", price:2750 },
+            { id:98, name:"Pulpen Joyko BP-56", category:"Pulpen", price:2500 },
+            { id:99, name:"Pulpen Joyko BP-338 Vocus (12 pcs)", category:"Pulpen", price:25000 },
+            { id:100, name:"Pulpen Joyko GP-321 Erasable", category:"Pulpen", price:4000 },
+            { id:101, name:"Pulpen Kenko KD-70", category:"Pulpen", price:4000 },
+            { id:102, name:"Pulpen Kenko Microtec 0.28mm", category:"Pulpen", price:4100 },
+            { id:103, name:"Pulpen Pilot G2 0.7mm", category:"Pulpen", price:20000 },
+            { id:104, name:"Pulpen Zebra Sarasa Clip", category:"Pulpen", price:15000 },
+            
+            // Pensil
+            { id:105, name:"Pensil Kayu Joyko P-88 (12 pcs)", category:"Pensil", price:11600 },
+            { id:106, name:"Pensil Kayu Joyko P-88 (satuan)", category:"Pensil", price:2250 },
+            { id:107, name:"Pensil Kayu Joyko P-98 Batik", category:"Pensil", price:2750 },
+            { id:108, name:"Pensil Mekanik Joyko MP-19", category:"Pensil", price:7500 },
+            { id:109, name:"Pensil Mekanik Joyko MP-50", category:"Pensil", price:8000 },
+            { id:110, name:"Isi Pensil Mekanik Joyko PL-05 (12 pcs)", category:"Pensil", price:4000 },
+            { id:111, name:"Pensil Warna Joyko CP-109 12 warna", category:"Pensil", price:15000 },
+            { id:112, name:"Pensil Warna Joyko WCP-110 Watercolour", category:"Pensil", price:15000 },
+            { id:113, name:"Pensil Kayu Faber-Castell 9000 2B", category:"Pensil", price:4500 },
+            { id:114, name:"Pensil Warna Kenko CP-12 FNWE", category:"Pensil", price:20000 },
+            { id:115, name:"Pensil Warna Kenko CP-12F (panjang)", category:"Pensil", price:15000 },
+            
+            // Stabilo
+            { id:116, name:"Stabilo Joyko HL-301", category:"Stabilo", price:4250 },
+            { id:117, name:"Stabilo Joyko HL-54 (6 warna pastel)", category:"Stabilo", price:25370 },
+            { id:118, name:"Stabilo Kenko HL-100", category:"Stabilo", price:10878 },
+            { id:119, name:"Stabilo Zebra Mildliner", category:"Stabilo", price:20000 },
+            { id:120, name:"Stabilo Faber-Castell Textliner 365", category:"Stabilo", price:11500 },
+            { id:121, name:"Stabilo (asli) BOSS Original", category:"Stabilo", price:20000 },
+            
+            // Penghapus
+            { id:122, name:"Penghapus Joyko ER-20BL (hitam besar)", category:"Penghapus", price:2500 },
+            { id:123, name:"Penghapus Joyko ER-30 Soft Eraser", category:"Penghapus", price:3000 },
+            { id:124, name:"Penghapus Joyko B40 Putih Kecil", category:"Penghapus", price:2500 },
+            { id:125, name:"Penghapus Joyko Mechanical Eraser MER-114", category:"Penghapus", price:9400 },
+            { id:126, name:"Penghapus Deli EH302 (kubus)", category:"Penghapus", price:4500 },
+            { id:127, name:"Penghapus Faber-Castell Dust Free Black", category:"Penghapus", price:3100 },
+            
+            // Tip-Ex
+            { id:128, name:"Tip-Ex Cair Joyko CF-S209A", category:"Tip-Ex", price:5500 },
+            { id:129, name:"Tip-Ex Pita Joyko CT-522 (12m)", category:"Tip-Ex", price:10500 },
+            { id:130, name:"Tip-Ex Pita Joyko CT-520 (2m refill)", category:"Tip-Ex", price:14500 },
+            { id:131, name:"Tip-Ex Pita Deli Sakura 71540", category:"Tip-Ex", price:15000 },
+            
+            // Buku
+            { id:132, name:"Buku Tulis SIDU 38 lembar", category:"Buku", price:3600 },
+            { id:133, name:"Buku Tulis SIDU 38 lembar (10 pack)", category:"Buku", price:35000 },
+            { id:134, name:"Buku Tulis Big Boss Campus 36 lembar B5", category:"Buku", price:6000 },
+            { id:135, name:"Buku Tulis Kiky 38 lembar", category:"Buku", price:4500 },
+            { id:136, name:"Buku Gambar SIDU A4 (10 lembar)", category:"Buku", price:10000 },
+            { id:137, name:"Buku Agenda Joyko Hard Cover NB-702", category:"Buku", price:39000 },
+            { id:138, name:"Buku Kas Kiky Folio 80 lembar", category:"Buku", price:19000 },
+            { id:139, name:"Buku Ekspedisi Kiky 200 lembar", category:"Buku", price:30000 },
+            
+            // Map
+            { id:140, name:"Map L Joyko (transparan)", category:"Map", price:2000 },
+            { id:141, name:"Map L Okey (12 pcs)", category:"Map", price:13500 },
+            { id:142, name:"Map Plastik Folio Joyko", category:"Map", price:6000 },
+            { id:143, name:"Map Kancing InterX", category:"Map", price:7000 },
+            { id:144, name:"Map Stopmap Biola", category:"Map", price:4000 },
+            { id:145, name:"Map Jepit Kenko", category:"Map", price:20000 },
+            { id:146, name:"Map Harmonika Joyko EF-1F4", category:"Map", price:40000 },
+            { id:147, name:"Ordner Bambi folio", category:"Map", price:32500 },
+            { id:148, name:"Map Zipper Kenko", category:"Map", price:20000 },
+            { id:149, name:"Map Gantung Latomap", category:"Map", price:20000 },
+            { id:150, name:"Map Presentasi Deli FC-20", category:"Map", price:19500 },
+            
+            // Alat Ukur, Gunting, Cutter, Penggaris, Lem, Stapler, Stempel (contoh)
+            { id:151, name:"Penggaris Plastik Joyko 30cm", category:"Penggaris", price:6000 },
+            { id:152, name:"Penggaris Besi Joyko 30cm", category:"Penggaris", price:12500 },
+            { id:153, name:"Gunting Sedang Joyko SC-838", category:"Gunting", price:9500 },
+            { id:154, name:"Cutter Kecil Joyko A-300A", category:"Cutter", price:8000 },
+            { id:155, name:"Lem Cair Joyko GL-30 35ml", category:"Lem", price:6500 },
+            { id:156, name:"Lem Stick Joyko GS-100 8gr", category:"Lem", price:5500 },
+            { id:157, name:"Double Tape Joyko 1/2 inch", category:"Double Tape", price:3500 },
+            { id:158, name:"Stapler Joyko HD-10", category:"Stapler", price:16000 },
+            { id:159, name:"Staples Joyko No.10 (1000 pcs)", category:"Stapler", price:3200 },
+            { id:160, name:"Pembolong Kertas Joyko 30XL", category:"Pembolong", price:15200 },
+            { id:161, name:"Stempel Kayu Custom", category:"Stempel", price:16000 },
+            { id:162, name:"Stempel Flash Custom", category:"Stempel", price:33000 },
+            { id:163, name:"Stempel Otomatis Joyko S-69", category:"Stempel", price:49000 },
+            { id:164, name:"Tinta Stempel Joyko Refill", category:"Stempel", price:7300 },
+            { id:165, name:"Binder Clip Joyko No.107 (12 pcs)", category:"Klip", price:6500 },
+            { id:166, name:"Paper Clip Joyko No.5 (jumbo)", category:"Klip", price:5900 },
+        ];
+        
+        // Tambahkan gambar placeholder untuk setiap produk (produk1.jpg, produk2.jpg, ...)
+        productsData.forEach(p => { p.image = `produk${p.id}.jpg`; });
+        
+        let cart = [];
+        let currentCategory = "Semua";
+        
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        }
+        
+        // Render filter kategori
+        function renderCategoryFilter() {
+            const categories = ["Semua", ...new Set(productsData.map(p => p.category))];
+            const container = document.getElementById('categoryFilter');
+            container.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('span');
+                btn.className = `category-badge ${currentCategory === cat ? 'active' : ''}`;
+                btn.textContent = cat;
+                btn.addEventListener('click', () => {
+                    currentCategory = cat;
+                    renderCategoryFilter();
+                    renderProducts();
+                });
+                container.appendChild(btn);
+            });
+        }
+        
+        function renderProducts() {
+            const container = document.getElementById('productList');
+            container.innerHTML = '';
+            const filtered = currentCategory === "Semua" ? productsData : productsData.filter(p => p.category === currentCategory);
+            filtered.forEach(p => {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 col-sm-4 col-6 mb-3';
+                col.innerHTML = `
+                    <div class="card product-card h-100" data-id="${p.id}">
+                        <img src="${p.image}" class="product-img" alt="${p.name}" onerror="this.src='https://placehold.co/200x140?text=No+Image'">
+                        <div class="card-body text-center p-2">
+                            <h6 class="card-title">${p.name}</h6>
+                            <p class="card-text text-primary fw-bold">${formatRupiah(p.price)}</p>
+                            <span class="badge bg-secondary">${p.category}</span>
+                            <button class="btn btn-sm btn-outline-primary mt-2 add-to-cart" data-id="${p.id}">Tambah</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    addToCart(id);
+                });
+            });
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if(!e.target.classList.contains('add-to-cart')){
+                        const id = parseInt(card.dataset.id);
+                        addToCart(id);
+                    }
+                });
+            });
+        }
+        
+        function addToCart(id) {
+            const product = productsData.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+            if(existing) existing.quantity++;
+            else cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });
+            renderCart();
+        }
+        
+        function renderCart() {
+            const tbody = document.getElementById('cartItems');
+            tbody.innerHTML = '';
+            let subtotal = 0;
+            cart.forEach(item => {
+                const totalItem = item.price * item.quantity;
+                subtotal += totalItem;
+                const row = `<tr>
+                    <td><img src="produk${item.id}.jpg" class="cart-item-img" onerror="this.style.display='none'"> ${item.name}</td>
+                    <td>${formatRupiah(item.price)}</td>
+                    <td><input type="number" class="form-control form-control-sm qty-input" data-id="${item.id}" value="${item.quantity}" min="1" style="width:70px"></td>
+                    <td>${formatRupiah(totalItem)}</td>
+                    <td><button class="btn btn-sm btn-danger remove-item" data-id="${item.id}"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+            document.querySelectorAll('.qty-input').forEach(inp => {
+                inp.addEventListener('change', function() {
+                    const id = parseInt(this.dataset.id);
+                    const newQty = parseInt(this.value);
+                    if(newQty > 0) {
+                        const item = cart.find(i => i.id === id);
+                        if(item) item.quantity = newQty;
+                        renderCart();
+                        updateTotalsDisplay();
+                    }
+                });
+            });
+            document.querySelectorAll('.remove-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    cart = cart.filter(i => i.id !== id);
+                    renderCart();
+                    updateTotalsDisplay();
+                });
+            });
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cartBadge');
+            if (totalItems > 0) {
+                badge.textContent = totalItems;
+                badge.style.display = 'inline';
+            } else {
+                badge.style.display = 'none';
+            }
+            updateTotalsDisplay();
+        }
+        
+        function updateTotalsDisplay() {
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const taxPercent = parseFloat(document.getElementById('taxPercent').value) || 0;
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            const dp = parseFloat(document.getElementById('dpAmount').value) || 0;
+            const tax = subtotal * taxPercent / 100;
+            const total = subtotal + tax - discount;
+            const remaining = total - dp;
+            document.getElementById('subtotal').innerText = formatRupiah(subtotal);
+            document.getElementById('totalFinal').innerText = formatRupiah(total);
+            document.getElementById('remaining').innerText = formatRupiah(remaining);
+        }
+        
+        document.getElementById('updateTotalsBtn')?.addEventListener('click', updateTotalsDisplay);
+        document.getElementById('clearCartBtn')?.addEventListener('click', () => { cart = []; renderCart(); });
+        
+        function generateNotaNumber() {
+            const now = new Date();
+            return `INV/${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}/${Math.floor(Math.random()*1000)}`;
+        }
+        
+        document.getElementById('generateNotaBtn')?.addEventListener('click', () => {
+            if(cart.length === 0) { alert("Keranjang kosong!"); return; }
+            const customerName = document.getElementById('customerName').value || "Pelanggan";
+            const customerPhone = document.getElementById('customerPhone').value;
+            const customerAddress = document.getElementById('customerAddress').value || "-";
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const paymentStatus = document.getElementById('paymentStatus').value;
+            const taxPercent = parseFloat(document.getElementById('taxPercent').value) || 0;
+            const discount = parseFloat(document.getElementById('discountAmount').value) || 0;
+            const dp = parseFloat(document.getElementById('dpAmount').value) || 0;
+            let subtotal = cart.reduce((s,i) => s + (i.price * i.quantity), 0);
+            const tax = subtotal * taxPercent / 100;
+            const total = subtotal + tax - discount;
+            const remaining = total - dp;
+            
+            document.getElementById('docCustomerName').innerText = customerName;
+            document.getElementById('docCustomerAddress').innerText = customerAddress;
+            document.getElementById('docCustomerPhone').innerText = customerPhone ? `WA: ${customerPhone}` : '';
+            document.getElementById('docPaymentMethod').innerText = paymentMethod;
+            document.getElementById('docPaymentStatus').innerText = paymentStatus;
+            document.getElementById('docNumber').innerText = generateNotaNumber();
+            document.getElementById('docDate').innerText = new Date().toLocaleDateString('id-ID');
+            document.getElementById('docTaxPercent').innerText = taxPercent;
+            document.getElementById('docSubtotal').innerText = formatRupiah(subtotal);
+            document.getElementById('docTax').innerText = formatRupiah(tax);
+            document.getElementById('docDiscount').innerText = formatRupiah(discount);
+            document.getElementById('docDP').innerText = formatRupiah(dp);
+            document.getElementById('docTotal').innerText = formatRupiah(total);
+            document.getElementById('docRemaining').innerText = formatRupiah(remaining);
+            const tbody = document.getElementById('docCartItems');
+            tbody.innerHTML = '';
+            cart.forEach((item, idx) => {
+                const row = `<tr><td>${idx+1}</td><td>${item.name}</td><td>${formatRupiah(item.price)}</td><td>${item.quantity}</td><td>${formatRupiah(item.price * item.quantity)}</td></tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+            document.getElementById('notaSection').style.display = 'block';
+            document.getElementById('notaSection').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        document.getElementById('closeNotaBtn')?.addEventListener('click', () => document.getElementById('notaSection').style.display = 'none');
+        document.getElementById('printNotaBtn')?.addEventListener('click', () => { window.print(); });
+        
+        function captureNota() {
+            return new Promise((resolve) => {
+                const el = document.getElementById('notaSection');
+                const noPrint = el.querySelectorAll('.no-print');
+                noPrint.forEach(e => e.style.display = 'none');
+                html2canvas(el, { scale: 2, backgroundColor: '#fff' }).then(canvas => {
+                    noPrint.forEach(e => e.style.display = 'block');
+                    resolve(canvas.toDataURL('image/jpeg', 0.9));
+                });
+            });
+        }
+        
+        document.getElementById('downloadPdfBtn')?.addEventListener('click', async () => {
+            const imgData = await captureNota();
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a5');
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`Nota_${new Date().toISOString().slice(0,10)}.pdf`);
+        });
+        
+        let currentImage = null;
+        document.getElementById('sendWABtn')?.addEventListener('click', async () => {
+            currentImage = await captureNota();
+            const modal = new bootstrap.Modal(document.getElementById('whatsappModal'));
+            document.getElementById('waLoading').style.display = 'block';
+            document.getElementById('waContent').style.display = 'none';
+            modal.show();
+            setTimeout(() => {
+                document.getElementById('waLoading').style.display = 'none';
+                document.getElementById('waContent').style.display = 'block';
+                document.getElementById('imagePreview').innerHTML = `<img src="${currentImage}" class="preview-image" style="max-width:100%">`;
+                document.getElementById('downloadImageBtn').href = currentImage;
+                document.getElementById('downloadImageBtn').style.display = 'inline-block';
+                document.getElementById('confirmWaBtn').style.display = 'inline-block';
+                const phone = document.getElementById('customerPhone').value;
+                if(phone) document.getElementById('waNumber').value = phone.startsWith('62') ? phone : '62' + phone;
+            }, 500);
+        });
+        document.getElementById('confirmWaBtn')?.addEventListener('click', () => {
+            let waNumber = document.getElementById('waNumber').value.replace(/\D/g, '');
+            if(!waNumber.startsWith('62')) waNumber = '62' + waNumber;
+            const message = document.getElementById('waMessage').value;
+            const link = document.createElement('a');
+            link.href = currentImage;
+            link.download = `nota_${Date.now()}.jpg`;
+            link.click();
+            const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message + " (Nota terlampir, silakan unduh gambar)")}`;
+            window.open(waUrl, '_blank');
+            bootstrap.Modal.getInstance(document.getElementById('whatsappModal')).hide();
+        });
+        
+        renderCategoryFilter();
+        renderProducts();
+        renderCart();
+    </script>
+</body>
+</html>

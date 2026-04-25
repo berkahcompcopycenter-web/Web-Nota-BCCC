@@ -280,6 +280,7 @@
             <button id="printNotaBtn" class="btn btn-primary btn-sm">Cetak A5</button>
             <button id="downloadPdfBtn" class="btn btn-pdf btn-sm">PDF</button>
             <button id="sendWABtn" class="btn btn-whatsapp btn-sm">WhatsApp</button>
+            <button id="sendGDriveBtn" class="btn btn-info btn-sm"><i class="fab fa-google"></i> Google Drive</button>
         </div>
     </div>
 
@@ -289,6 +290,49 @@
         <div class="modal-body"><div id="waLoading" class="text-center"><div class="spinner-border"></div><p>Menyiapkan...</p></div>
         <div id="waContent" style="display:none;"><div class="row"><div class="col-md-6"><div id="imagePreview"></div></div><div class="col-md-6"><input type="text" id="waNumber" class="form-control mb-2" placeholder="628123456789"><textarea id="waMessage" class="form-control mb-2" rows="4">Halo, berikut nota belanja Anda. Terima kasih.</textarea><div class="alert alert-info">Nota akan dikirim sebagai gambar JPG</div></div></div></div></div>
         <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button id="confirmWaBtn" class="btn btn-whatsapp" style="display:none;">Kirim</button><a href="#" id="downloadImageBtn" class="btn btn-success" style="display:none;">Download Gambar</a></div>
+    </div></div></div>
+
+    <!-- Modal Google Drive -->
+    <div class="modal fade" id="gdriveModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title"><i class="fab fa-google"></i> Simpan ke Google Drive</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div id="gdriveInitial" style="display:block;">
+                <div class="alert alert-info">Klik tombol di bawah untuk mulai upload ke Google Drive</div>
+                <p><strong>Folder Tujuan:</strong> Nota Penjualan</p>
+                <div class="form-group">
+                    <label>Format File:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="formatPdf" name="gdriveFormatRadio" value="pdf" checked>
+                        <label class="form-check-label" for="formatPdf">PDF - Dokumen</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="formatJpg" name="gdriveFormatRadio" value="jpg">
+                        <label class="form-check-label" for="formatJpg">JPG - Gambar</label>
+                    </div>
+                </div>
+            </div>
+            <div id="gdriveLoading" style="display:none;" class="text-center">
+                <div class="spinner-border text-primary mb-3"></div>
+                <p><strong id="gdriveStatusText">Menyiapkan...</strong></p>
+            </div>
+            <div id="gdriveSuccess" style="display:none;" class="text-center">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                    <p><strong>Berhasil diupload ke Google Drive!</strong></p>
+                    <p id="gdriveFileName" class="mb-0"></p>
+                </div>
+            </div>
+            <div id="gdriveError" style="display:none;" class="text-center">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle fa-2x mb-2"></i>
+                    <p><strong id="gdriveErrorMsg">Terjadi kesalahan</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            <button id="gdriveUploadBtn" class="btn btn-info"><i class="fab fa-google"></i> Mulai Upload</button>
+        </div>
     </div></div></div>
 
     <footer class="bg-dark text-white text-center py-3 mt-5"><div class="container">&copy; 2025 Berkah comp and copy center - Sistem Nota A5</div></footer>
@@ -730,6 +774,97 @@
             const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message + " (Nota terlampir, silakan unduh gambar)")}`;
             window.open(waUrl, '_blank');
             bootstrap.Modal.getInstance(document.getElementById('whatsappModal')).hide();
+        });
+        
+        // ==================== GOOGLE DRIVE UPLOAD ====================
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlz-zqPHg5RCw_rzyUWXVqa_D-TP27NRXU97XYrtivirDRTwtYIy4K0qMfWp72aoI-/exec';
+        
+        async function uploadToDriveViaScript(fileBlob, fileName) {
+            const reader = new FileReader();
+            return new Promise((resolve, reject) => {
+                reader.onload = async function(e) {
+                    const base64 = e.target.result.split(',')[1];
+                    try {
+                        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                fileName: fileName,
+                                fileData: base64,
+                                mimeType: fileBlob.type
+                            })
+                        });
+                        const result = await response.json();
+                        if(result.success) {
+                            resolve(result);
+                        } else {
+                            reject(new Error(result.error || 'Upload failed'));
+                        }
+                    } catch(err) {
+                        reject(err);
+                    }
+                };
+                reader.onerror = () => reject(new Error('File reading failed'));
+                reader.readAsDataURL(fileBlob);
+            });
+        }
+        
+        document.getElementById('sendGDriveBtn')?.addEventListener('click', () => {
+            const modal = new bootstrap.Modal(document.getElementById('gdriveModal'));
+            document.getElementById('gdriveInitial').style.display = 'block';
+            document.getElementById('gdriveLoading').style.display = 'none';
+            document.getElementById('gdriveSuccess').style.display = 'none';
+            document.getElementById('gdriveError').style.display = 'none';
+            modal.show();
+        });
+        
+        document.getElementById('gdriveUploadBtn')?.addEventListener('click', async () => {
+            document.getElementById('gdriveInitial').style.display = 'none';
+            document.getElementById('gdriveLoading').style.display = 'block';
+            document.getElementById('gdriveSuccess').style.display = 'none';
+            document.getElementById('gdriveError').style.display = 'none';
+            
+            try {
+                const format = document.querySelector('input[name="gdriveFormatRadio"]:checked').value;
+                const timestamp = new Date().toISOString().slice(0, 19).replace('T', '_');
+                let fileName, fileData, mimeType;
+                
+                document.getElementById('gdriveStatusText').textContent = 'Menyiapkan file...';
+                
+                if(format === 'pdf') {
+                    const imgData = await captureNota();
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF('p', 'mm', 'a5');
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                    fileName = `Nota_${timestamp}.pdf`;
+                    mimeType = 'application/pdf';
+                    fileData = pdf.output('blob');
+                } else {
+                    const imgData = await captureNota();
+                    fileData = await fetch(imgData).then(r => r.blob());
+                    fileName = `Nota_${timestamp}.jpg`;
+                    mimeType = 'image/jpeg';
+                }
+                
+                document.getElementById('gdriveStatusText').textContent = 'Mengunggah ke Google Drive...';
+                const uploadedFile = await uploadToDriveViaScript(fileData, fileName);
+                
+                document.getElementById('gdriveLoading').style.display = 'none';
+                document.getElementById('gdriveSuccess').style.display = 'block';
+                document.getElementById('gdriveFileName').textContent = uploadedFile.fileName + ' ✓';
+                
+                setTimeout(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('gdriveModal')).hide();
+                }, 2000);
+                
+            } catch (err) {
+                console.error('Error:', err);
+                document.getElementById('gdriveLoading').style.display = 'none';
+                document.getElementById('gdriveError').style.display = 'block';
+                document.getElementById('gdriveErrorMsg').textContent = 'Error: ' + err.message;
+            }
         });
         
         document.getElementById('searchInput').addEventListener('input', function() {
